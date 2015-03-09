@@ -88,7 +88,7 @@
 		);
 
 	foreach (json_decode(file_get_contents(__DIR__ . '/groups/taiwan.json'), true) as $map) {
-		if ($count % 10 === 0 && $count > 0) {
+		if ($count % 10 === 0 && $count > 0 && $count <= 100) {
 ?>
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins id="ad-<?php echo $count ?>" class="ad adsbygoogle"
