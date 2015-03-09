@@ -79,16 +79,11 @@
 			'20' => '4808317990',
 			'30' => '6285051191',
 			'40' => '3573760390',
-			'50' => '8003959990',
-			'60' => '9806607197',
-			'70' => '6713539994',
-			'80' => '8190273199',
-			'90' => '9667006394',
-			'100' => '2143739597'
+			'50' => '8003959990'
 		);
 
 	foreach (json_decode(file_get_contents(__DIR__ . '/groups/taiwan.json'), true) as $map) {
-		if ($count % 10 === 0 && $count > 0 && $count <= 100) {
+		if ($count % 10 === 0 && $count > 0 && $count <= 50) {
 ?>
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <ins id="ad-<?php echo $count ?>" class="ad adsbygoogle"
