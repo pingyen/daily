@@ -94,6 +94,7 @@
 		<li><a href="<?php echo $path ?>" <?php if ($time === null) { echo 'class="current"'; } ?> >全部</a></li>
 		<li><a href="<?php echo $path . (substr($path, -4) === '.php' ? '?t=morning' : '-morning') ?>" <?php if ($time === 'morning') { echo 'class="current"'; } ?> >日報</a></li>
 		<li><a href="<?php echo $path . (substr($path, -4) === '.php' ? '?t=evening' : '-evening') ?>" <?php if ($time === 'evening') { echo 'class="current"'; } ?> >晚報</a></li>
+		<li><a href="taipei-word.php<?php if ($time !== null) { echo "?t=$time"; } ?>" >Word</a></li>
 	</ul>
 </nav>
 <?php
