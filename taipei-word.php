@@ -159,6 +159,9 @@
 		$phpWord->addFontStyle('fnStyle', array('size' => 10, 'name' => 'Heiti TC'));
 		$phpWord->addFontStyle('fnStyle2', array('size' => 14, 'name' => 'Heiti TC'));
 
+		$m = count($taipei) - 1;
+		$i = 0;
+
 		foreach ($taipei as $map) {
 			$table = $section->addTable();
 			$keys = array_keys($map);
@@ -173,15 +176,9 @@
 				$cell = $table->addCell(1200, $cellStyle);
 
 				if (isset($article['authors'])) {
-					$authors = $article['authors'];
-					$m = count($authors) - 1;
-
-					for ($i = 0; $i < $m; ++$i) {
-						$cell->addText($authors[$i], 'fnStyle');
-						$cell->addTextBreak();
+					foreach($article['authors'] as $author) {
+						$cell->addText($author, 'fnStyle');
 					}
-
-					$cell->addText($authors[$m], 'fnStyle');
 				}
 
 				$table->addCell(600, $cellStyle)->addText($kindMap[$article['kind']], 'fnStyle');
@@ -208,7 +205,11 @@
 				}
 			}
 
-			$section->addPageBreak();
+			if ($i !== $m) {
+				$section->addPageBreak();
+			}
+
+			++$i;
 		}
 
 		$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord);
