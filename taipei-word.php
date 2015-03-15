@@ -156,6 +156,8 @@
 				'opinion' => '投書'
 			);
 
+		$dept = json_decode(file_get_contents(__DIR__ . '/taipei-dept.json', true));
+
 		$phpWord->addFontStyle('fnStyle', array('size' => 10, 'name' => 'Heiti TC'));
 		$phpWord->addFontStyle('fnStyle2', array('size' => 14, 'name' => 'Heiti TC'));
 
@@ -186,7 +188,16 @@
 
 			$table->addRow(200);
 			$table->addCell(1400, $cellStyle)->addText('相關局處', 'fnStyle2');
-			$table->addCell(7200, $cellStyle + array('gridSpan' => 3))->addText('', 'fnStyle');
+
+			$depts = array();
+
+			foreach ($dept as $key => $patterns) {
+				if (match(content($article), $patterns) === true) {
+					$depts[] = $key;
+				}
+			}
+
+			$table->addCell(7200, $cellStyle + array('gridSpan' => 3))->addText(implode('、', $depts), 'fnStyle2');
 
 			$table->addRow(200);
 			$cell = $table->addCell(8600, $cellStyle + array('gridSpan' => 4));
@@ -219,4 +230,110 @@
 	header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 	header('Content-Disposition: attachment; filename="' . $file . '"');
 	readfile($cachePath);
+
+	function preProcess ($content) {
+		$content = str_replace(
+				array(
+					'（', '）', '〔', '〕', '｛', '｝', 
+					'﹒', '，', '；', '：',
+					'－', '？', '！', '＠', '＃', '＄', '％', '＆', '｜', '＼',
+					'／', '＋', '＝', '＊', '～', '｀', '＇', '＂', '＜', '＞',
+					'︿', '＿', '　',
+					'０', '１', '２', '３', '４', '５', '６', '７', '８', '９',
+					'ａ', 'ｂ', 'ｃ', 'ｄ', 'ｅ', 'ｆ', 'ｇ', 'ｈ', 'ｉ', 'ｊ',
+					'ｋ', 'ｌ', 'ｍ', 'ｎ', 'ｏ', 'ｐ', 'ｑ', 'ｒ', 'ｓ', 'ｔ',
+					'ｕ', 'ｖ', 'ｗ', 'ｘ', 'ｙ', 'ｚ',
+					'Ａ', 'Ｂ', 'Ｃ', 'Ｄ', 'Ｅ', 'Ｆ', 'Ｇ', 'Ｈ', 'Ｉ', 'Ｊ',
+					'Ｋ', 'Ｌ', 'Ｍ', 'Ｎ', 'Ｏ', 'Ｐ', 'Ｑ', 'Ｒ', 'Ｓ', 'Ｔ',
+					'Ｕ', 'Ｖ', 'Ｗ', 'Ｘ', 'Ｙ', 'Ｚ',
+					'○',
+					'·', '˙', '●', '•',
+					'　', '×', '╱', '◎'
+				),
+				array(
+					'(', ')', '[', ']', '{', '}', 
+					'.', ',', ';', ':',
+					'-', '?', '!', '@', '#', '$', '%', '&', '|', '\\',
+					'/', '+', '=', '*', '~', '`', '\'', '"', '<', '>',
+					'^', '_', ' ',
+					'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+					'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+					'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+					'u', 'v', 'w', 'x', 'y', 'z',
+					'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+					'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+					'U', 'V', 'W', 'X', 'Y', 'Z',
+					'0',
+					'.', '.', '.', '.',
+					' ', 'x', '/', '@'
+				),
+				$content
+			);
+
+		$content = mb_strtolower($content);
+		$content = str_replace(
+				array(
+					'臺',
+					'一', '二', '三', '四', '五', '六', '七', '八', '九',
+					'柯p', '柯:'
+				),
+				array(
+					'台',
+					1, 2, 3, 4, 5, 6, 7, 8, 9,
+					'柯文哲', '柯文哲:'
+				), 
+				$content
+			);
+
+		return $content;
+	}
+
+	function content (&$article) {
+		if (isset($article['content2'])) {
+			return $article['content2'];
+		}
+
+		$content = $article['title'] . "\n" . $article['content'];
+
+		if (isset($article['set'])) {
+			$content = $article['set'] . "\n" . $content;
+		}
+
+		if (isset($article['caption'])) {
+			$content = $article['caption'] . "\n" . $content;
+		}
+
+		$content = preProcess($content);
+
+		$article['content2'] = $content;
+
+		return $content;
+	}
+
+	function match ($content, $patterns) {
+		foreach ($patterns as $positive => $negatives) {
+			if (preg_match_all($positive . 'u', $content, $matches)) {
+				if ($negatives === null) {
+					return true;
+				}
+
+				foreach ($matches[0] as $match) {
+					$deny = false;
+
+					foreach ($negatives as $negative) {
+						if (preg_match($negative . 'u', $match)) {
+							$deny = true;
+							break;
+						}
+					}
+
+					if ($deny === false) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 ?>
