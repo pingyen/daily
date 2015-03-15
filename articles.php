@@ -647,6 +647,10 @@
 
 				foreach ($matches[1] as $match) {
 					foreach (explode('、', $match) as $author) {
+						if (($pos = strpos($author, '╱')) !== false) {
+							$author = substr($author, $pos + 3);
+						}
+
 						$authors[] = $author;
 					}
 				}
