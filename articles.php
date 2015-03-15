@@ -36,7 +36,14 @@
 			}
 			else if ($source === 'appledaily') {
 				$category = $rss['category'];
-				$kind = $category !== '論壇與專欄總覽' ? 'news' : $label === '蘋論' ? 'editorial' : 'opinion';
+
+				if ($category === '論壇與專欄總覽') {
+					$kind = $label === '蘋論' ? 'editorial' : 'opinion';
+				}
+				else {
+					$kind = 'news';
+				}
+
 				$subcategory = $label;
 			}
 			else if ($source === 'libertytimes') {
@@ -45,7 +52,13 @@
 			}
 			else if ($source === 'udn') {
 				$category = $rss['category'];
-				$kind = $category !== '評論' ? 'news' : $label === '社論' ? 'editorial' : 'opinion';
+
+				if ($category === '評論') {
+					$kind = $label === '社論' ? 'editorial' : 'opinion';
+				}
+				else {
+					$kind = 'news';
+				}
 
 				switch ($category) {
 					case '要聞':
