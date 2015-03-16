@@ -1,9 +1,12 @@
 <?php
 	if (isset($_SERVER['PHP_AUTH_USER']) === false || $_SERVER['PHP_AUTH_USER'] !== 'taipeitaiwan' || $_SERVER['PHP_AUTH_PW'] !== 'kpcityooo') {
-	    header('WWW-Authenticate: Basic realm="Vexed.Me"');
+        header('WWW-Authenticate: Basic realm="Vexed.Me"');
     	header('HTTP/1.0 401 Unauthorized');
-		die();
+	    die();
 	}
+
+	$picks = isset($_GET['a']) ? explode(',', $_GET['a']) : array();
+	$size = isset($_GET['k']) ? intval($_GET['k']) : 20;
 ?>
 <!DOCTYPE html>
 <html>
@@ -70,10 +73,6 @@
 
 	body > table tr > .order {
 		width: 40px;
-	}	
-
-	body > table tr > .keywords {
-		display: none;
 	}
 </style>
 </head>
@@ -93,10 +92,21 @@
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
 ?>
 <header>
-	<h1>Daily Debug 2</h1>
+	<h1>Daily Debug 3</h1>
 </header>
 <?php
-	foreach ($articles as $key => $article) {
+	require_once(__DIR__ . '/common/reduce.php');
+
+	foreach ($picks as $key) {
+		$article = $articles[$key];
+		$keyword = array_keys(reduce($keywords[$key], $size));
+
+		if (isset($common)) {
+			$common = array_intersect($common, $keyword);
+		}
+		else {
+			$common = $keyword;
+		}
 ?>
 <table>
 	<tr>
@@ -108,8 +118,21 @@
 		<td class="about" ><?php if (isset($article['about'])) { echo $article['about']; } ?></td>
 		<td class="score" ><?php echo $article['score']; ?></td>
 		<td class="order" ><?php echo $article['order']; ?></td>
-		<td class="keywords" ><?php echo implode(', ', array_keys($keywords[$key])) ?></td>
-	</tr>	
+	</tr>
+	<tr>
+		<td class="keyword" colspan="8" ><?php echo implode(', ', $keyword) ?></td>
+	</tr>
+</table>
+<?php
+	}
+
+	if (isset($common)) {
+?>
+<table>
+	<tr>
+		<td><?php echo count($common) ?></td>
+		<td><?php echo implode(', ', $common) ?></td>
+	</tr>
 </table>
 <?php
 	}

@@ -538,7 +538,17 @@
 			}
 
 			if (substr($meta, 0, 3) === '（') {
-				$article['authors'] = explode('、', substr($meta, 3, -3));
+				$authors = explode('、', substr($meta, 3, -3));
+
+				foreach ($authors as &$author) {
+					$pos = strpos($author, '：');
+
+					if ($pos !== false) {
+						$author = substr($author, $pos + 3);
+					}
+				}
+
+				$article['authors'] = $authors;
 			}
 			else if (substr($meta, 0, 3) === '⊙') {
 				$article['authors'] = array(substr($meta, 3));
@@ -657,7 +667,7 @@
 
 				$article['authors'] = $authors;
 			}
-			else if (preg_match('/記者([^會].+)/u', $content, $matches)) {
+			else if (preg_match('/記者([^會表].+)/u', $content, $matches)) {
 				$meta = $matches[1];
 
 				if (preg_match('/([^採]+)(採訪整理)$/u', $meta, $matches)) {

@@ -21,9 +21,9 @@
 	$articles = json_decode(file_get_contents(__DIR__ . '/articles.json'), true);
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
 	$map = merge(map($keywords, array(), 20, 10), map($keywords, array(), 100, 40));
-	$map = merge($map, neighbor($articles, $keywords, array(), 0, 10, 4));
+	$map = merge($map, neighbor($articles, $keywords, array(), 0, 20, 8));
 	$map = merge($map, neighbor($articles, $keywords, array(), 0, 100, 30));
-	$map = merge($map, neighbor($articles, $keywords, array(), 1, 10, 3));
+	$map = merge($map, neighbor($articles, $keywords, array(), 1, 20, 6));
 	$map = merge($map, neighbor($articles, $keywords, array(), 1, 100, 20));
 	$groups = group($map);
 

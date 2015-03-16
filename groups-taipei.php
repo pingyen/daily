@@ -112,9 +112,9 @@
 
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
 	$map = merge(map($keywords, $negatives, 20, 10), map($keywords, $negatives, 100, 40));
-	$map = merge($map, neighbor($articles, $keywords, $negatives, 0, 10, 4));
+	$map = merge($map, neighbor($articles, $keywords, $negatives, 0, 20, 8));
 	$map = merge($map, neighbor($articles, $keywords, $negatives, 0, 100, 30));
-	$map = merge($map, neighbor($articles, $keywords, $negatives, 1, 10, 3));
+	$map = merge($map, neighbor($articles, $keywords, $negatives, 1, 20, 6));
 	$map = merge($map, neighbor($articles, $keywords, $negatives, 1, 100, 20));
 	$groups = group($map);
 
@@ -183,9 +183,9 @@
 	file_put_contents(__DIR__ . '/groups/taipei-evening.json', json_encode($groups3));
 
 	$map = merge(map($keywords, $positives, 20, 10), map($keywords, $positives, 100, 40));
-	$map = merge($map, neighbor($articles, $keywords, $positives, 0, 10, 4));
+	$map = merge($map, neighbor($articles, $keywords, $positives, 0, 20, 8));
 	$map = merge($map, neighbor($articles, $keywords, $positives, 0, 100, 30));
-	$map = merge($map, neighbor($articles, $keywords, $positives, 1, 10, 3));
+	$map = merge($map, neighbor($articles, $keywords, $positives, 1, 20, 6));
 	$map = merge($map, neighbor($articles, $keywords, $positives, 1, 100, 20));
 	$groups = group($map);
 
