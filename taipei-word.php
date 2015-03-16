@@ -7,6 +7,57 @@
 
 	\PhpOffice\PhpWord\Autoloader::register();
 
+	require_once(__DIR__ . '/common/preProcess.php');
+
+	function content (&$article) {
+		if (isset($article['content2'])) {
+			return $article['content2'];
+		}
+
+		$content = $article['title'] . "\n" . $article['content'];
+
+		if (isset($article['set'])) {
+			$content = $article['set'] . "\n" . $content;
+		}
+
+		if (isset($article['caption'])) {
+			$content = $article['caption'] . "\n" . $content;
+		}
+
+		$content = preProcess($content);
+
+		$article['content2'] = $content;
+
+		return $content;
+	}
+
+	function match ($content, $patterns) {
+		foreach ($patterns as $positive => $negatives) {
+			if (preg_match_all($positive . 'u', $content, $matches)) {
+				if ($negatives === null) {
+					return true;
+				}
+
+				foreach ($matches[0] as $match) {
+					$deny = false;
+
+					foreach ($negatives as $negative) {
+						if (preg_match($negative . 'u', $match)) {
+							$deny = true;
+							break;
+						}
+					}
+
+					if ($deny === false) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
 
 	$mtime = filemtime(__DIR__ . '/groups/taipei.json');
 
@@ -230,55 +281,4 @@
 	header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 	header('Content-Disposition: attachment; filename="' . $file . '"');
 	readfile($cachePath);
-
-	require_once(__DIR__ . '/common/preProcess.php');
-
-	function content (&$article) {
-		if (isset($article['content2'])) {
-			return $article['content2'];
-		}
-
-		$content = $article['title'] . "\n" . $article['content'];
-
-		if (isset($article['set'])) {
-			$content = $article['set'] . "\n" . $content;
-		}
-
-		if (isset($article['caption'])) {
-			$content = $article['caption'] . "\n" . $content;
-		}
-
-		$content = preProcess($content);
-
-		$article['content2'] = $content;
-
-		return $content;
-	}
-
-	function match ($content, $patterns) {
-		foreach ($patterns as $positive => $negatives) {
-			if (preg_match_all($positive . 'u', $content, $matches)) {
-				if ($negatives === null) {
-					return true;
-				}
-
-				foreach ($matches[0] as $match) {
-					$deny = false;
-
-					foreach ($negatives as $negative) {
-						if (preg_match($negative . 'u', $match)) {
-							$deny = true;
-							break;
-						}
-					}
-
-					if ($deny === false) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
 ?>
