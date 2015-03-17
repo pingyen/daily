@@ -433,9 +433,19 @@
 							$match = $matches[1];
 						}
 
-						$match = preg_replace(array('/本報/u', '/特約/u', '/實習/u', '/特派/u', '/記者/u', '/編譯(?!(組|中心))/u'), '', $match);
+						$authors = explode('、', $match);
 
-						$article['authors'] = explode('、', $match);
+						foreach ($authors as &$author) {
+							$pos = strpos($author, '記者');
+
+							if ($pos !== false) {
+								$author = substr($author, $pos + 6);
+							}
+
+							$author = preg_replace(array('/編譯(?!(組|中心))/u'), '', $author);
+						}
+
+						$article['authors'] = $authors;
 					}
 				}
 				else if ($meta === '本報訊' ||
