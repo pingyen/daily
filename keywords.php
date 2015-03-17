@@ -48,7 +48,7 @@
 		$stops[] = html_entity_decode('&#8239;');
 
 		$weights = array(
-				'set' => array(120),
+				'set' => array(80),
 				'title' => array(100),
 				'content' => array(80, 60, 40, 20, 10, 5),
 				'caption' => array(50, 30, 10, 5)
@@ -98,7 +98,7 @@
 
 		arsort($map);
 
-		return reduce($map, 100);
+		return reduce($map, 200);
 	}
 
 
