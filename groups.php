@@ -20,7 +20,7 @@
 
 	$articles = json_decode(file_get_contents(__DIR__ . '/articles.json'), true);
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
-	$map = merge(map($keywords, array(), 40, 14), map($keywords, array(), 200, 60));
+	$map = merge(map($keywords, array(), 60, 20), map($keywords, array(), 200, 60));
 	$map = merge($map, neighbor($articles, $keywords, array(), 0, 200, 40));
 	$groups = group($map);
 

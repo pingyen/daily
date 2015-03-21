@@ -6,7 +6,7 @@
 	}
 
 	$picks = isset($_GET['a']) ? explode(',', $_GET['a']) : array();
-	$size = isset($_GET['k']) ? intval($_GET['k']) : 40;
+	$size = isset($_GET['k']) ? intval($_GET['k']) : 60;
 ?>
 <!DOCTYPE html>
 <html>
