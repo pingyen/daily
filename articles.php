@@ -641,7 +641,7 @@
 				$article['authors'] = array($matches[1]);
 				$ch = mb_substr($content, -1);
 
-				if ($ch !== '。' && $ch !== '」' && $ch !== '！') {
+				if ($ch !== '。' && $ch !== '」' && $ch !== '！' && $ch !== '？') {
 					$article['about'] = substr($content, strrpos($content, "\n\n") + 2);
 				}
 			}
