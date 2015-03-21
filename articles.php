@@ -267,6 +267,8 @@
 						$description
 					);
 
+				$tidy = new tidy();
+				$description = $tidy->repairString($description, array(), 'utf8');
 				$article['description'] = $description;
 			}
 
