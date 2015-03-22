@@ -19,9 +19,17 @@
 
 
 	$articles = json_decode(file_get_contents(__DIR__ . '/articles.json'), true);
+	$skips = array();
+
+	foreach ($articles as $key => $article) {
+		if (isset($article['mode']) && $article['mode'] === '廣編特輯') {
+			$skips[$key] = true;
+		}
+	}
+
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
-	$map = merge(map($keywords, array(), 100, 25), map($keywords, array(), 400, 80));
-	$map = merge($map, neighbor($articles, $keywords, array(), 0, 400, 50));
+	$map = merge(map($keywords, $skips, 100, 25), map($keywords, $skips, 400, 80));
+	$map = merge($map, neighbor($articles, $keywords, $skips, 0, 400, 50));
 	$groups = group($map);
 
 	usort($groups, function ($a, $b) {
