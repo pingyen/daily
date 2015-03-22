@@ -4,7 +4,7 @@
 
 	body > header {
 		line-height: 1.4;
-		margin: 12px 12px -18px;
+		margin: 12px;
 	}
 
 	body > header > h1 {
@@ -23,7 +23,7 @@
 	}
 
 	body > article {
-		margin: 24px 0;
+		margin: 12px 0;
 	}
 
 	body > article > h2 {
@@ -92,7 +92,7 @@
 
 	.ad {
 		background: #DDD;
-		margin: -12px 12px 14px;
+		margin: 12px;
 	}
 
 	@media only screen and (max-device-width: 736px) {
