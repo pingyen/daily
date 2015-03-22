@@ -20,8 +20,8 @@
 
 	$articles = json_decode(file_get_contents(__DIR__ . '/articles.json'), true);
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
-	$map = merge(map($keywords, array(), 60, 20), map($keywords, array(), 200, 60));
-	$map = merge($map, neighbor($articles, $keywords, array(), 0, 200, 40));
+	$map = merge(map($keywords, array(), 100, 25), map($keywords, array(), 400, 80));
+	$map = merge($map, neighbor($articles, $keywords, array(), 0, 400, 50));
 	$groups = group($map);
 
 	usort($groups, function ($a, $b) {
