@@ -215,7 +215,7 @@
 				$description = $article['description'];
 
 				if (substr($link, 0, 31) === 'http://feedproxy.google.com/~r/') {
-					$description = preg_replace('/<img src="\/\/feeds.feedburner.com\/~r\/[^>]+>/', '', $description);
+					$description = preg_replace('/<img src="(https?:)?\/\/feeds.feedburner.com\/~r\/[^>]+>/', '', $description);
 				}
 
 				if ($article['kind'] === 'opinion') {
