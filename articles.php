@@ -243,6 +243,13 @@
 							'/<link href="[^>]+>/'), '', $description);
 
 						$description = str_replace(array('<h4>', '</h4>', '<a href="####" class="photo_pop_icon">分享</a>', '...'), array('<div>', '</div>', '', ''), $description);
+
+						$description = preg_replace(
+								'/<img src="http:\/\/pgw.udn.com.tw\/gw\/photo.php\?u=([^&]*)&[^"]*">/',
+								'<img src="$1">',
+								$description
+							);
+
 						break;
 					case 'appledaily':
 						$description = preg_replace('/(?:<br>)+<a href="http:\/\/www.appledaily.com.tw\/appledaily\/article\/.*?$/i', '', $description);
