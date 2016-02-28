@@ -172,7 +172,7 @@
 					$map[] = array(
 							'category' => $category,
 							'label' => $label,
-							'url' => 'http://www.appledaily.com.tw/' . $anchor->attr('href')
+							'url' => 'http://www.appledaily.com.tw' . $anchor->attr('href')
 						);
 				}
 			}

@@ -234,7 +234,8 @@
 
 				switch ($source) {
 					case 'chinatimes':
-						$description = str_replace('<img src="http://www.chinatimes.com/images/rss-logo-ctoppa.png">', '', $description) . '...';
+						$description = str_replace(array(
+							'<img src="http://www.chinatimes.com/images/rss-logo-ctoppa.png">', '<img src="http://www.chinatimes.com/images/logo-1200x635.jpg">'), '', $description) . '...';
 						break;
 					case 'udn':
 						$description = preg_replace(array(
