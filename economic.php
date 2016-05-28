@@ -1,7 +1,7 @@
 <?php
 	ini_set('max_execution_time', 0);
 	ini_set('memory_limit', -1);
-	ini_set('date.timezone', 'Asia/economic');
+	ini_set('date.timezone', 'Asia/Taipei');
 
 	$mtime = filemtime(__DIR__ . '/groups/economic.json');
 
