@@ -99,7 +99,7 @@
 
 			$map = array();
 
-			foreach ($doc['ul > li'] as $group) {
+			foreach ($doc['.newrss_left > li'] as $group) {
 				$group = pq($group);
 				$category = $group->html();
 				$category = trim(substr($category, 0, strpos($category, ' ')));
