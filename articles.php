@@ -150,6 +150,7 @@
 				$doc = phpQuery::newDocumentXML(str_replace(array('', '', '&'), array('', '', '&amp;'), file_get_contents($url)));
 			} catch (Exception $e) {
 				echo "Loading RSS Fialed: $url\n";
+				$doc = array('channel item' => array());
 			}
 
 			$articles = array();
@@ -329,7 +330,6 @@
 			}
 
 			$article['link'] = $link;
-			$this->article = $article;
 
 			return $html;
 		}
@@ -377,7 +377,7 @@
 			$article['content'] = implode("\n\n", $content);
 
 
-			$meta = $main['#story_bady_info h3 span'];
+			$meta = $main['#story_bady_info .story_bady_info_author span'];
 			$pieces = explode(' ', trim($meta->text()));
 
 			switch ($pieces[0]) {
