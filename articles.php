@@ -509,6 +509,10 @@
 			return $article;
 		}
 
+		private function commercialtimes ($html) {
+			return $this->chinatimes($html);
+		}
+
 		private function chinatimes ($html) {
 			$article = $this->article;
 			$start = strpos($html, '<body ');
@@ -996,13 +1000,14 @@
 			}
 
 			$scoreMap = array(
-					'國際' => 300,
+					'國際' => 600,
 					'要聞' => 100,
 					'財經' => 80,
 					'政治' => 40,
 					'社會' => 30,
 					'地方' => 30,
 					'生活' => 30,
+					'工商' => 30,
 					'評論' => 20,
 					'投訴' => 20,
 					'娛樂' => 10

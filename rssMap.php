@@ -104,7 +104,7 @@
 				$category = $group->html();
 				$category = trim(substr($category, 0, strpos($category, ' ')));
 
-				if ($category !== '中國時報') {
+				if ($category !== '中國時報' && $category !== '工商時報') {
 					continue;
 				}
 
@@ -118,7 +118,11 @@
 						$label !== '兩岸國際' &&
 						$label !== '財經焦點' &&
 						$label !== '時論廣場' &&
-						$label !== '地方新聞') {
+						$label !== '地方新聞' &&
+						$label !== '工商總覽' &&
+						$label !== '財經要聞' &&
+						$label !== '全球財經' &&
+						$label !== '產業．科技') {
 						continue;
 					}
 
