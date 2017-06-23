@@ -184,10 +184,10 @@
 			$doc = phpQuery::newDocument(file_get_contents('http://news.ltn.com.tw/service?p=8'));
 			$map = array();
 
-			foreach ($doc['.Txml tr']->slice(1) as $tr) {
+			foreach ($doc['.ltnrss tr']->slice(1) as $tr) {
 				$tr = pq($tr);
 				$td = $tr['td'];
-				$label = substr($td->eq(0)->text(), 3);
+				$label = $td->eq(0)->text();
 
 				if ($label !== '頭版' &&
 					$label !== '政治' &&

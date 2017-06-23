@@ -730,14 +730,14 @@
 		private function libertytimes ($html) {
 			$article = $this->article;
 			$doc = phpQuery::newDocument($html);
-			$main = $doc['#newstext'];
+			$main = $doc['.articlebody'];
 
 
 			$caption = array();
 
-			foreach ($main['#newsphoto p'] as $p) {
-				$p = pq($p);
-				$caption[] = $p->text();
+			foreach ($main['.boxTitle li img'] as $img) {
+				$img = pq($img);
+				$caption[] = $img->attr('alt');
 			}
 
 			$caption = implode("\n\n", $caption);
