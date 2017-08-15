@@ -378,7 +378,9 @@
 			$article['content'] = implode("\n\n", $content);
 
 
-			$meta = $main['#story_bady_info .story_bady_info_author span'];
+			$meta = $main['#story_bady_info .story_bady_info_author'];
+			$meta['span']->remove();
+
 			$pieces = explode(' ', trim($meta->text()));
 
 			switch ($pieces[0]) {
