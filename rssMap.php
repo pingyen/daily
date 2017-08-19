@@ -24,7 +24,7 @@
 
 			foreach ($doc['#rss_list .group'] as $group) {
 				$group = pq($group);
-				$category = $group['h3']->text();
+				$category = trim($group['h3 > a']->text());
 
 				if ($category !== '要聞' &&
 					$category !== '社會' &&
@@ -84,7 +84,7 @@
 					$map[] = array(
 							'category' => $category,
 							'label' => $label,
-							'url' => 'http://udn.com' . $anchor->attr('href')
+							'url' => $anchor->attr('href')
 						);
 				}
 			}
