@@ -922,6 +922,7 @@
 
 			switch ($article['source']) {
 				case 'chinatimes':
+				case 'commercialtimes':
 					switch ($category) {
 						case '焦點要聞':
 							$key = '要聞';
@@ -1019,7 +1020,7 @@
 					'娛樂' => 10
 				);
 
-			$article['score'] = $scoreMap[$key];
+			$article['score'] = isset($scoreMap[$key]) === true ? $scoreMap[$key] : 0;
 		}
 
 		return $articles;
