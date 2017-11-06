@@ -897,6 +897,7 @@
 
 			if (preg_match('/^《TAIPEI TIMES 焦點》/u', $title) ||
 				preg_match('/^《中英對照讀新聞》/u', $title) ||
+				preg_match('/^中英對照讀新聞》/u', $title) ||
 				preg_match('/^每日動一句/u', $title) ||
 				preg_match('/^一(週|周)大事/u', $title) ||
 				preg_match('/各報重點新聞一覽/u', $title) ||
