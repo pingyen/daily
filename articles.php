@@ -924,6 +924,7 @@
 			switch ($article['source']) {
 				case 'chinatimes':
 				case 'commercialtimes':
+					$international = 200;
 					switch ($category) {
 						case '焦點要聞':
 							$key = '要聞';
@@ -942,6 +943,7 @@
 					}
 					break;
 				case 'appledaily':
+					$international = 2000;
 					switch ($category) {
 						case '財經總覽':
 							$key = '財經';
@@ -966,6 +968,7 @@
 					}
 					break;
 				case 'libertytimes':
+					$international = 2000;
 					switch ($category) {
 						case '頭版':
 							$key = '要聞';
@@ -986,7 +989,8 @@
 				case 'uen':
 				case 'edn':
 				case 'udn':
-					switch ($category) {						
+					$international = 500;
+					switch ($category) {
 						case '產經':
 							$key = '財經';
 							break;
@@ -1007,7 +1011,7 @@
 			}
 
 			$scoreMap = array(
-					'國際' => 1000,
+					'國際' => $international,
 					'要聞' => 200,
 					'財經' => 30,
 					'政治' => 30,
