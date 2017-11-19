@@ -612,13 +612,13 @@
 
 		private function appledaily ($html) {
 			$article = $this->article;
-			$doc = phpQuery::newDocument($html);
-			$main = $doc['#maincontent'];
+			$doc = phpQuery::newDocument(str_replace('<div class="ndArticle_margin">', '', $html));
+			$main = $doc['.ndArticle_content'];
 
 
 			$caption = array();
 
-			foreach ($main->find('figure')->find('.rel_img_des p, span, .textbox p') as $element) {
+			foreach ($main->find('figcaption') as $element) {
 				$element = pq($element);
 				$text = $element->text();
 
@@ -638,7 +638,7 @@
 
 			$content = array();
 
-			foreach ($main['.articulum > p'] as $p) {
+			foreach ($main['h2, p'] as $p) {
 				$p = pq($p);
 				$p->find('style')->remove();
 				$text = strip_tags(trim(str_replace('<br>', "\n", $p->html())));
