@@ -103,7 +103,7 @@
 <article>
 	<h2>新聞群組 <?php echo $count ?></h2>
 <?php
-		$map = array_slice($map, 0, log(count($map)) + 1, true);
+		$map = array_slice($map, 0, log(count($map)) + 2, true);
 
 		foreach(array_keys($map) as $key) {
 			$article = $articles[$key];
