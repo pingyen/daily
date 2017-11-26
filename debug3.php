@@ -99,13 +99,16 @@
 
 	foreach ($picks as $key) {
 		$article = $articles[$key];
-		$keyword = array_keys(reduce($keywords[$key], $size));
+		$keywords2 = reduce($keywords[$key], $size);
 
-		if (isset($common)) {
-			$common = array_intersect($common, $keyword);
-		}
-		else {
-			$common = $keyword;
+		$common = isset($common) === true ?
+			array_intersect($common, array_keys($keywords2)) :
+			array_keys($keywords2);
+
+		$snippets = array();
+
+		foreach ($keywords2 as $keyword => $score){
+			$snippets[] = "$keyword $score";
 		}
 ?>
 <table>
@@ -120,7 +123,7 @@
 		<td class="order" ><?php echo $article['order']; ?></td>
 	</tr>
 	<tr>
-		<td class="keyword" colspan="8" ><?php echo implode(', ', $keyword) ?></td>
+		<td class="keyword" colspan="8" ><?php echo implode(', ', $snippets); ?></td>
 	</tr>
 </table>
 <?php
