@@ -73,6 +73,10 @@
 					$term = mb_substr($snippet, $j, 2, 'UTF-8');
 					$pass = false;
 
+					if (ctype_alnum($term) === true) {
+						continue;
+					}
+
 					foreach ($stops as $stop) {
 						if (strpos($term, $stop) !== false) {
 							$pass = true;
