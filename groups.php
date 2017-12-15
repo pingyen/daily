@@ -22,8 +22,12 @@
 	$skips = array();
 
 	foreach ($articles as $key => $article) {
-		if (isset($article['mode']) && $article['mode'] === '廣編特輯') {
-			$skips[$key] = true;
+		if (isset($article['mode']) === true) {
+			$mode = $article['mode'];
+
+			if ($mode === '廣編特輯' || $mode === '特別企劃') {
+				$skips[$key] = true;
+			}
 		}
 	}
 
