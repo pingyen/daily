@@ -756,7 +756,7 @@
 
 			$content = array();
 
-			foreach ($main->children('h4, p') as $block) {
+			foreach ($main['.text']->children('h4, p') as $block) {
 				$block = pq($block);
 				$content[] = $block->text();
 			}
