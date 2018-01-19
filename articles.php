@@ -904,6 +904,7 @@
 				preg_match('/重要財經新聞一覽/u', $title) ||
 				preg_match('/晚安新聞/u', $title) ||
 				preg_match('/星座理財/u', $title) ||
+				preg_match('/福利熊 蘋果樂園/u', $title) ||
 				preg_match('/^《蘋果日報》最鄉民的影音頻道/u', $title)) {
 				continue;
 			}
