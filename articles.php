@@ -6,7 +6,7 @@
 	require_once(__DIR__ . '/phpQuery/phpQuery.php');
 
 
-	class RssThread extends Thread {
+	class RssWorker {
 		private $source;
 		private $rss;
 		private $key;
@@ -286,7 +286,7 @@
 		}
 	}
 
-	class ArticleThread extends Thread {
+	class ArticleWorker {
 		private $article;
 		private $key;
 		private $html;
@@ -1058,29 +1058,26 @@
 
 
 	$max = 30;
-	$workers = array();
 	$count = 0;
 
 	foreach (json_decode(file_get_contents(__DIR__ . '/rssMap.json'), true) as $source => $items) {
 		foreach ($items as $item) {
-			$worker = new RssThread($source, $item, $count);
-			$worker->start();
-			$workers[] = $worker;
+			$pid = pcntl_fork();
+
+			if ($pid === 0) {
+				(new RssWorker($source, $item, $count))->run();
+				die();
+			}
+
 			++$count;
 
 			if ($count % $max === 0) {
-				foreach ($workers as $worker) {
-					$worker->join();
-				}
-
-				$workers = array();
+				while (pcntl_wait($status) !== -1);
 			}
 		}
 	}
 
-	foreach ($workers as $worker) {
-		$worker->join();
-	}
+	while (pcntl_wait($status) !== -1);
 
 
 	$articles = array();
@@ -1092,27 +1089,24 @@
 	$articles = dedup($articles);
 
 
-	$workers = array();
 	$count = 0;
 
 	foreach ($articles as $article) {
-		$worker = new ArticleThread($article, $count);
-		$worker->start();
-		$workers[] = $worker;
+		$pid = pcntl_fork();
+
+		if ($pid === 0) {
+			(new ArticleWorker($article, $count))->run();
+			die();
+		}
+
 		++$count;
 
 		if ($count % $max === 0) {
-			foreach ($workers as $worker) {
-				$worker->join();
-			}
-
-			$workers = array();
+			while (pcntl_wait($status) !== -1);
 		}
 	}
 
-	foreach ($workers as $worker) {
-		$worker->join();
-	}
+	while (pcntl_wait($status) !== -1);
 
 
 	$articles = array();

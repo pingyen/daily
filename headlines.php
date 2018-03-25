@@ -6,7 +6,7 @@
 	require(__DIR__ . '/phpQuery/phpQuery.php');
 
 
-	class WorkerThread extends Thread {
+	class HeadlineWorker {
 		private $category;
 		private $source;
 		private $time;
@@ -301,19 +301,18 @@
 			'blue' =>  array('cdnews')
 		);
 
-	$workers = array();
-
 	foreach ($sourceMap as $category => $sources) {
 		foreach ($sources as $source) {
-			$worker = new WorkerThread($category, $source);
-			$worker->start();
-			$workers[] = $worker;
+			$pid = pcntl_fork();
+
+			if ($pid === 0) {
+				(new HeadlineWorker($category, $source))->run();
+				die();
+			}
 		}
 	}
 
-	foreach ($workers as $worker) {
-		$worker->join();
-	}
+	while (pcntl_wait($status) !== -1);
 
 	$mergeMap = array();
 
