@@ -145,38 +145,20 @@
 
 			foreach ($doc['.each_level'] as $section) {
 				$section = pq($section);
-				$category = str_replace(' ', '', $section['h2 > a']->text());
-
-				if ($category !== '要聞總覽' &&
-					$category !== '國際總覽' &&
-					$category !== '財經總覽' &&
-					$category !== '論壇與專欄總覽') {
-					continue;
-				}
 
 				foreach ($section['ul li a'] as $anchor) {
 					$anchor = pq($anchor);
 					$label = $anchor->text();
+					$href = $anchor->attr('href');
 
-					if ($category === '要聞總覽' &&
-						$label !== '頭條' &&
-						$label !== '要聞' &&
-						$label !== '政治' &&
-						$label !== '社會' &&
-						$label !== '生活' &&
-						$label !== '地方綜合' &&
-						$label !== '投訴') {
-						continue;
-					}
-
-					if ($category === '國際總覽' && $label == '雙語天下') {
+					if (strpos($href, '/daily/') === false) {
 						continue;
 					}
 
 					$map[] = array(
-							'category' => $category,
+							'category' => '日報總覽',
 							'label' => $label,
-							'url' => 'https://tw.appledaily.com' . $anchor->attr('href')
+							'url' => 'https://tw.appledaily.com' . $href
 						);
 				}
 			}
