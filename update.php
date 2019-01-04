@@ -5,5 +5,5 @@
 	shell_exec('php groups.php');
 	shell_exec('php groups-taipei.php');
 	shell_exec('php groups-economic.php');
-	shell_exec('php headlines.php');
+//	shell_exec('php headlines.php');
 ?>

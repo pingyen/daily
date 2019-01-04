@@ -90,6 +90,7 @@
 	<h1><a href="<?php echo $path ?>" >台北市政府報紙新聞</a></h1>
 	<p>擷取時間：<time datetime="<?php echo $mtime ?>"><?php echo date('Y-m-d H:i:s', $mtime) ?></time></p>
 </header>
+<!--
 <nav>
 	<ul>
 		<li><a href="<?php echo $path ?>" <?php if ($time === null) { echo 'class="current"'; } ?> >全部</a></li>
@@ -118,6 +119,7 @@
 <?php
 	}
 ?>
+-->
 <article id="others" >
 	<h2>其它要聞</h2>
 <?php
