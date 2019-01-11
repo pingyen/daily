@@ -34,18 +34,6 @@
 				$kind = $label === '時論廣場' ? 'opinion' : 'news';
 				$category = $label;
 			}
-			else if ($source === 'appledaily') {
-				$category = $rss['category'];
-
-				if ($category === '論壇與專欄總覽') {
-					$kind = $label === '蘋論' ? 'editorial' : 'opinion';
-				}
-				else {
-					$kind = 'news';
-				}
-
-				$subcategory = $label;
-			}
 			else if ($source === 'libertytimes') {
 				$kind = $label === '言論' ? 'opinion' : 'news';
 				$category = $label;
@@ -253,9 +241,6 @@
 							);
 
 						break;
-					case 'appledaily':
-						$description = preg_replace('/(?:<br>)+<a href="http:\/\/www.appledaily.com.tw\/appledaily\/article\/.*?$/i', '', $description);
-						$description = '<p>' . str_replace('<br>', '</p><p>', $description) . '</p>';
 				}
 
 				$description = preg_replace(
@@ -281,6 +266,84 @@
 				$tidy = new tidy();
 				$description = $tidy->repairString($description, array('show-body-only' => true), 'utf8');
 				$article['description'] = $description;
+			}
+
+			return $articles;
+		}
+	}
+
+	class PageWorker {
+		private $source;
+
+		public function __construct ($source) {
+			$this->source = $source;
+		}
+
+		public function run () {
+			$source = $this->source;
+			file_put_contents(__DIR__ . '/temp/p.' . $source, json_encode($this->$source()));
+		}
+
+		private function appledaily() {
+			$articles = array();
+
+			$doc = phpQuery::newDocument(file_get_contents('https://tw.appledaily.com/daily'));
+
+			foreach ($doc['article.nclns'] as $article) {
+				$article = pq($article);
+				$category = $article['h2']->text();
+
+				if ($category !== '頭條' &&
+					$category !== '要聞' &&
+					$category !== '政治' &&
+					$category !== '社會' &&
+					$category !== '蘋論陣線' &&
+					$category !== '國際頭條' &&
+					$category !== '國際新聞' &&
+					$category !== '財經焦點' &&
+					$category !== '熱門話題' &&
+					$category !== '地產焦點' &&
+					$category !== '副刊焦點' &&
+					$category !== '論壇' &&
+					$category !== '名采') {
+					continue;
+				}
+
+				$kind = call_user_func(function($category) {
+					if ($category === '蘋論陣線') {
+						return 'editorial';
+					}
+
+					if ($category === '論壇' ||
+						$category === '名采') {
+						return 'opinion';
+					}
+
+					return 'news';
+				}, $category);
+
+				foreach ($article['ul > li > a'] as $anchor) {
+					$anchor = pq($anchor);
+
+					$href = $anchor->attr('href');
+
+					$tokens = explode('/', $href);
+					$date = $tokens[count($tokens) - 3];
+
+					$year = intval(substr($date, 0, 4));
+					$month = intval(substr($date, 4, 2));
+					$day = intval(substr($date, 6, 2));
+
+					$articles[] = array(
+						'title' => $anchor->text(),
+						'link' => $href,
+						'source' => 'appledaily',
+						'kind' => $kind,
+						'category' => $category,
+						'timestamp' => strtotime("$year/$month/$day 06:00"),
+						'description' => ''
+					);
+				}
 			}
 
 			return $articles;
@@ -614,6 +677,9 @@
 		private function appledaily ($html) {
 			$article = $this->article;
 			$doc = phpQuery::newDocument(str_replace('<div class="ndArticle_margin">', '', $html));
+
+			$article['title'] = $doc['h1']->text();
+
 			$main = $doc['.ndArticle_content'];
 
 
@@ -953,26 +1019,18 @@
 				case 'appledaily':
 					$international = 2000;
 					switch ($category) {
-						case '財經總覽':
+						case '財經焦點':
+						case '熱門話題':
 							$key = '財經';
 							break;
-						case '國際總覽':
+						case '國際頭條':
+						case '國際新聞':
 							$key = '國際';
 							break;
-						case '論壇與專欄總覽':
+						case '論壇':
+						case '名采':
 							$key = '評論';
 							break;
-						default:
-							switch ($subcategory) {
-								case '頭條':
-									$key = '要聞';
-									break;
-								case '地方綜合':
-									$key = '地方';
-									break;
-								default:
-									$key = $subcategory;
-							}
 					}
 					break;
 				case 'libertytimes':
@@ -1090,6 +1148,13 @@
 
 	for ($i = 0; $i < $count; ++$i) {
 		$articles = array_merge($articles, json_decode(file_get_contents(__DIR__ . '/temp/r2.' . $i), true));
+	}
+
+	$sources = array('appledaily');
+
+	foreach ($sources as $source) {
+		(new PageWorker($source))->run();
+		$articles = array_merge($articles, json_decode(file_get_contents(__DIR__ . '/temp/p.' . $source), true));
 	}
 
 	$articles = dedup($articles);
