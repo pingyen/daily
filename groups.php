@@ -36,31 +36,47 @@
 	$map = merge($map, neighbor($articles, $keywords, $skips, 0, 400, 50));
 	$groups = group($map);
 
-	usort($groups, function ($a, $b) {
-			global $articles;
+	$scores = array();
+	$orders = array();
 
-			$score = 0;
-			$order = 0;
+	foreach ($groups as $group) {
+		$score = 0;
+		$order = 0;
 
-			foreach (array_keys($a) as $key) {
-				$article = $articles[$key];
-				$score += $article['score'];
-				$order += $article['order'];
-			}
+		foreach (array_keys($group) as $key) {
+			$article = $articles[$key];
+			$score += $article['score'];
+			$order += $article['order'];
+		}
 
-			$score2 = 0;
-			$order2 = 0;
+		$scores[] = $score;
+		$orders[] = $order;
+	}
 
-			foreach (array_keys($b) as $key) {
-				$article = $articles[$key];
-				$score2 += $article['score'];
-				$order2 += $article['order'];
-			}
+	$keys = array_keys($groups);
+
+	usort($keys, function ($a, $b) {
+			global $scores, $orders;
+
+			$score = $scores[$a];
+			$order = $scores[$a];
+			$score2 = $scores[$b];
+			$order2 = $scores[$b];
 
 			return $score === $score2 ? $order - $order2 : $score2 - $score;
 		});
 
-	foreach ($groups as &$group) {
+	$groups2 = array();
+
+	foreach ($keys as $key) {
+		if ($scores[$key] < 30) {
+			continue;
+		}
+
+		$groups2[] = $groups[$key];
+	}
+
+	foreach ($groups2 as &$group) {
 		uksort($group, function ($a, $b) {
 				global $articles;
 
@@ -72,7 +88,7 @@
 			});
 	}
 
-	file_put_contents(__DIR__ . '/groups/taiwan.json', json_encode($groups));
+	file_put_contents(__DIR__ . '/groups/taiwan.json', json_encode($groups2));
 
 
 	$spent_time = time() - $start_time;

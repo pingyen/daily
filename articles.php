@@ -606,7 +606,8 @@
 				$p = pq($p);
 				$text = trim($p->text());
 
-				if ($text === '') {
+				if ($text === '' ||
+					$text === '(工商時報)') {
 					continue;
 				}
 
