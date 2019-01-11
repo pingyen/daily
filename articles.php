@@ -147,7 +147,7 @@
 			$url = $rss['url'];
 
 			try {
-				$doc = phpQuery::newDocumentXML(str_replace(array('', '', '&'), array('', '', '&amp;'), file_get_contents($url)));
+				$doc = phpQuery::newDocumentXML(file_get_contents($url));
 			} catch (Exception $e) {
 				echo "Loading RSS Fialed: $url\n";
 				$doc = array('channel item' => array());
@@ -172,7 +172,7 @@
 					continue;
 				}
 
-				$description = htmlspecialchars_decode(htmlspecialchars_decode(str_replace(array('<![CDATA[', ']]>'), '', $item['description']->html())));
+				$description = htmlspecialchars_decode(str_replace(array('<![CDATA[', ']]>'), '', $item['description']->html()));
 
 				$image = $item['image url']->eq(0)->text();
 
@@ -759,6 +759,11 @@
 
 			foreach ($main['.text']->children('h4, p') as $block) {
 				$block = pq($block);
+
+				if ($block->hasClass('appE1121') === true) {
+					continue;
+				}
+
 				$content[] = $block->text();
 			}
 
