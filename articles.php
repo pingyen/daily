@@ -302,7 +302,6 @@
 					$category !== '國際新聞' &&
 					$category !== '財經焦點' &&
 					$category !== '熱門話題' &&
-					$category !== '地產焦點' &&
 					$category !== '副刊焦點' &&
 					$category !== '論壇' &&
 					$category !== '名采') {
@@ -978,6 +977,11 @@
 				preg_match('/星座理財/u', $title) ||
 				preg_match('/福利熊 蘋果樂園/u', $title) ||
 				preg_match('/^《蘋果日報》最鄉民的影音頻道/u', $title)) {
+				continue;
+			}
+
+			if (isset($article['mode']) === true &&
+				$article['mode'] === '即時報導') {
 				continue;
 			}
 
