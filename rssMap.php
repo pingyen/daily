@@ -110,7 +110,7 @@
 
 				foreach ($group['.rssli'] as $li) {
 					$li = pq($li);
-					$label = $li['span']->eq(0)->text();
+					$label = trim($li['span']->eq(0)->text());
 
 					if ($label !== '焦點要聞' &&
 						$label !== '生活新聞' &&
@@ -138,7 +138,7 @@
 		}
 
 		private function libertytimes () {
-			$doc = phpQuery::newDocument(file_get_contents('http://news.ltn.com.tw/service?p=8'));
+			$doc = phpQuery::newDocument(file_get_contents('http://news.ltn.com.tw/service/8'));
 			$map = array();
 
 			foreach ($doc['.ltnrss tr']->slice(1) as $tr) {
