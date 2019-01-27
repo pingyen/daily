@@ -27,7 +27,16 @@
 
 			if ($mode === '廣編特輯' || $mode === '特別企劃') {
 				$skips[$key] = true;
+				continue;
 			}
+		}
+
+		if ($article['source'] === 'appledaily' &&
+			($article['category'] === 'opinion' ||
+			 substr($article['title'], 0, 18) === '國際夯人誌：' ||
+			 substr($article['title'], 0, 15) === '【蘋中人】')) {
+			$skips[$key] = true;
+			continue;
 		}
 	}
 
