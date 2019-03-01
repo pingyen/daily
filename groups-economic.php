@@ -111,7 +111,7 @@
 	}
 
 	$keywords = json_decode(file_get_contents(__DIR__ . '/keywords.json'), true);
-	$map = merge(map($keywords, $negatives, 100, 25), map($keywords, $negatives, 400, 80));
+	$map = merge(map($keywords, $negatives, 100, 30), map($keywords, $negatives, 400, 80));
 	$map = merge($map, neighbor($articles, $keywords, $negatives, 0, 400, 50));
 	$groups = group($map);
 
