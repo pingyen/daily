@@ -694,6 +694,7 @@
 
 			if ($caption !== '') {
 				$article['caption'] = $caption;
+				$article['description'] .= '<br><img src="' . $main['.ndAritcle_headPic > img']->attr('src') . '">';
 			}
 
 
