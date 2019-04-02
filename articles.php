@@ -798,20 +798,42 @@
 			$doc = phpQuery::newDocument($html);
 			$main = $doc['.articlebody'];
 
+			if ($main->length > 0) {
+				$caption = array();
 
-			$caption = array();
+				$imgs = $main['.boxTitle li img'];
 
-			foreach ($main['.boxTitle li img'] as $img) {
-				$img = pq($img);
-				$caption[] = $img->attr('alt');
+				foreach ($imgs as $img) {
+					$img = pq($img);
+					$caption[] = $img->attr('alt');
+				}
+
+				$caption = implode("\n\n", $caption);
+
+				if ($caption !== '') {
+					$article['caption'] = $caption;
+					$article['description'] .= '<br><img src="' . $imgs->eq(0)->attr('src') . '">';
+				}
 			}
+			else {
+				$main = $doc['.boxTitle'];
 
-			$caption = implode("\n\n", $caption);
+				$caption = array();
 
-			if ($caption !== '') {
-				$article['caption'] = $caption;
+				$divs = $main['.pic750'];
+
+				foreach ($divs as $div) {
+					$div = pq($div);
+					$caption[] = $div['p']->text();
+				}
+
+				$caption = implode("\n\n", $caption);
+
+				if ($caption !== '') {
+					$article['caption'] = $caption;
+					$article['description'] .= '<br><img src="' . $divs->eq(0)->children('img')->attr('src') . '">';
+				}
 			}
-
 
 			$content = array();
 
