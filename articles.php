@@ -634,6 +634,8 @@
 				$authors[] = $anchor->text();
 			}
 
+			$article['authors'] = $authors;
+
 			$caption = array();
 
 			foreach ($main['figcaption'] as $figcaption) {
