@@ -26,15 +26,7 @@
 			$source = $this->source;
 			$label = $rss['label'];
 
-			if ($source === 'chinatimes') {
-				if ($rss['category'] === '工商時報') {
-					$source = 'commercialtimes';
-				}
-
-				$kind = $label === '時論廣場' ? 'opinion' : 'news';
-				$category = $label;
-			}
-			else if ($source === 'libertytimes') {
+			if ($source === 'libertytimes') {
 				$kind = $label === '言論' ? 'opinion' : 'news';
 				$category = $label;
 			}
@@ -209,11 +201,6 @@
 
 				if ($article['kind'] === 'opinion') {
 					switch ($source) {
-						case 'chinatimes':
-							if (substr($article['title'], 0, 9) === '社論－') {
-								$article['kind'] = 'editorial';
-							}
-							break;
 						case 'libertytimes':
 							if (substr($article['title'], 0, 12) === '〈社論〉') {
 								$article['kind'] = 'editorial';
@@ -222,10 +209,6 @@
 				}
 
 				switch ($source) {
-					case 'commercialtimes':
-					case 'chinatimes':
-						$description = str_replace('<img src="//cache.chinatimes.com/images/logo-1200x635.jpg">', '', $description) . '...';
-						break;
 					case 'udn':
 						$description = preg_replace(array(
 							'/<div class="photo_pop">.*?<\/div>/s',
@@ -282,6 +265,66 @@
 		public function run () {
 			$source = $this->source;
 			file_put_contents(__DIR__ . '/temp/p.' . $source, json_encode($this->$source()));
+		}
+
+		private function chinatimes() {
+			$articles = array();
+
+			foreach (array(
+				'chinatimes' => 2601,
+				'commercialtimes' => 2602
+			) as $source => $key) {
+				for ($page = 1; $page <= 20; ++$page) {
+					$doc = phpQuery::newDocument(file_get_contents("https://www.chinatimes.com/newspapers/$key?page=$page"));
+
+					foreach ($doc['.articlebox-compact'] as $article) {
+						$article = pq($article);
+						$meta = $article['.meta-info'];
+						$category = $meta['.category > a']->text();
+
+						if ($category !== '政治要聞' &&
+							$category !== '財經焦點' &&
+							$category !== '國際大事' &&
+							$category !== '兩岸要聞' &&
+							$category !== '社會新聞' &&
+							$category !== '地方新聞' &&
+							$category !== '時論廣場' &&
+							$category !== '財經要聞' &&
+							$category !== '全球財經') {
+							continue;
+						}
+
+						$anchor = $article['.title > a'];
+						$link = 'https://www.chinatimes.com' . $anchor->attr('href');
+						$title = $anchor->text();
+
+						$kind = call_user_func(function($category, $title) {
+							if ($category === '時論廣場') {
+								return substr($title, 0, 6) === '社論' ?
+									'editorial' :
+									'opinion';
+							}
+
+							return 'news';
+						}, $category, $title);
+
+						$timestamp = strtotime($meta['time']->attr('datetime'));
+						$description = trim($article['.intro']->text());
+
+						$articles[] = array(
+							'title' => $title,
+							'link' => $link,
+							'source' => $source,
+							'kind' => $kind,
+							'category' => $category,
+							'timestamp' => $timestamp,
+							'description' => $description
+						);
+					}
+				}
+			}
+
+			return $articles;
 		}
 
 		private function appledaily() {
@@ -581,10 +624,15 @@
 
 		private function chinatimes ($html) {
 			$article = $this->article;
-			$start = strpos($html, '<body ');
-			$doc = phpQuery::newDocument(substr($html, $start, strpos($html, '</body>') + 7 - $start));
-			$main = $doc['.page_container article']->eq(0);
+			$doc = phpQuery::newDocument($html);
+			$main = $doc['.article-box'];
 
+			$authors = array();
+
+			foreach ($main['.meta-info > .author > a'] as $anchor) {
+				$anchor = pq($anchor);
+				$authors[] = $anchor->text();
+			}
 
 			$caption = array();
 
@@ -599,76 +647,20 @@
 				$article['caption'] = $caption;
 			}
 
-
 			$content = array();
 
 			foreach ($main['p'] as $p) {
 				$p = pq($p);
 				$text = trim($p->text());
-
-				if ($text === '' ||
-					$text === '(工商時報)') {
-					continue;
-				}
-
 				$content[] = $text;
 			}
 
 			$article['content'] = implode("\n\n", $content);
 
+			$image = $main['figure img']->eq(0)->attr('src');
 
-			$meta = $main['.rp_name']->eq(0)->text();
-
-			if (($pos = strpos($meta, '　')) !== false) {
-				if ($pos === 3) {
-					$meta = substr($meta, 0, 3) . substr($meta, 6);
-				}
-				else {
-					$meta = substr($meta, 0, $pos);
-				}
-			}
-
-			if (substr($meta, 0, 3) === '（') {
-				$authors = explode('、', substr($meta, 3, -3));
-
-				foreach ($authors as &$author) {
-					$pos = strpos($author, '：');
-
-					if ($pos !== false) {
-						$author = substr($author, $pos + 3);
-					}
-				}
-
-				$article['authors'] = $authors;
-			}
-			else if (substr($meta, 0, 3) === '⊙') {
-				$article['authors'] = array(substr($meta, 3));
-			} 
-			else if ($meta === '本報訊') {
-				$article['mode'] = $meta;
-			}
-			else if ($count = preg_match_all('/([^／╱\/]+)[／╱\/]([^、\n]+)/u', $meta, $matches)) {
-				if ($count > 1) {
-					$article['authors'] = $matches[1];
-					$article['mode'] = implode('、', $matches[2]);
-				}
-				else {
-					$match = $matches[1][0];
-					$match2 = $matches[2][0];
-
-					if ($match === '報導') {
-						$article['mode'] = $match;
-						$match = $match2;
-					}
-					else {
-						$article[$article['category'] === '時論廣場' ? 'about' : 'mode'] = $match2;
-					}
-
-					$article['authors'] = preg_split('/[ 、]/u', $match);
-				}
-			}
-			else {
-				$article['authors'] = array($meta);
+			if ($image !== '') {
+				$article['description'] .= '<br><img src="' . $image . '">';
 			}
 
 			return $article;
@@ -1005,17 +997,12 @@
 				case 'commercialtimes':
 					$international = 200;
 					switch ($category) {
-						case '焦點要聞':
-							$key = '要聞';
-							break;
 						case '時論廣場':
 							$key = '評論';
 							break;
-						case '兩岸國際':
+						case '全球財經':
+						case '兩岸要聞':
 							$key = '國際';
-							break;
-						case '財經焦點':
-							$key = '財經';
 							break;
 						default:
 							$key = substr($category, 0, 6);
@@ -1155,7 +1142,7 @@
 		$articles = array_merge($articles, json_decode(file_get_contents(__DIR__ . '/temp/r2.' . $i), true));
 	}
 
-	$sources = array('appledaily');
+	$sources = array('appledaily', 'chinatimes');
 
 	foreach ($sources as $source) {
 		(new PageWorker($source))->run();

@@ -92,51 +92,6 @@
 			return $map;
 		}
 
-		private function chinatimes () {
-			$url = 'http://www.chinatimes.com/syndication/rss';
-			$tokens = explode('<hr>', file_get_contents($url));
-			$doc = phpQuery::newDocument($tokens[1]);
-
-			$map = array();
-
-			foreach ($doc['.newrss_left > li'] as $group) {
-				$group = pq($group);
-				$category = $group->html();
-				$category = trim(substr($category, 0, strpos($category, ' ')));
-
-				if ($category !== '中國時報' && $category !== '工商時報') {
-					continue;
-				}
-
-				foreach ($group['.rssli'] as $li) {
-					$li = pq($li);
-					$label = trim($li['span']->eq(0)->text());
-
-					if ($label !== '焦點要聞' &&
-						$label !== '生活新聞' &&
-						$label !== '社會新聞' &&
-						$label !== '兩岸國際' &&
-						$label !== '財經焦點' &&
-						$label !== '時論廣場' &&
-						$label !== '地方新聞' &&
-						$label !== '工商總覽' &&
-						$label !== '財經要聞' &&
-						$label !== '全球財經' &&
-						$label !== '產業．科技') {
-						continue;
-					}
-
-					$map[] = array(
-							'category' => $category,
-							'label' => $label,
-							'url' => $li['a']->attr('href')
-						);
-				}
-			}
-
-			return $map;
-		}
-
 		private function libertytimes () {
 			$doc = phpQuery::newDocument(file_get_contents('http://news.ltn.com.tw/service/8'));
 			$map = array();
@@ -175,7 +130,7 @@
 
 	$start_time = time();
 
-	$sources = array('udn', 'chinatimes', 'libertytimes');
+	$sources = array('udn', 'libertytimes');
 
 	foreach ($sources as $source) {
 		$pid = pcntl_fork();
