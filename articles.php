@@ -651,7 +651,7 @@
 
 			$content = array();
 
-			foreach ($main['p'] as $p) {
+			foreach ($main['.article-body p'] as $p) {
 				$p = pq($p);
 				$text = trim($p->text());
 				$content[] = $text;
