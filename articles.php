@@ -470,7 +470,7 @@
 
 			$content = array();
 
-			foreach ($main->children('p, blockquote') as $block) {
+			foreach ($main['#article_body']->children('p, blockquote') as $block) {
 				$block = pq($block);
 				$text = trim($block->text());
 
@@ -672,30 +672,48 @@
 			$article = $this->article;
 			$doc = phpQuery::newDocument(str_replace('<div class="ndArticle_margin">', '', $html));
 
-			$article['title'] = $doc['h1']->text();
-
 			$main = $doc['.ndArticle_content'];
 
+			if ($main->length > 0) {
+				$article['title'] = $doc['h1']->text();
 
-			$caption = array();
+				$caption = array();
 
-			foreach ($main->find('figcaption') as $element) {
-				$element = pq($element);
-				$text = $element->text();
+				foreach ($main->find('figcaption') as $element) {
+					$element = pq($element);
+					$text = $element->text();
 
-				if ($text === '') {
-					continue;
+					if ($text === '') {
+						continue;
+					}
+
+					$caption[] = $text;
 				}
 
-				$caption[] = $text;
+				$caption = implode("\n\n", $caption);
+
+				if ($caption !== '') {
+					$article['caption'] = $caption;
+				}
 			}
+			else {
+				$main = $doc['#article-body'];
 
-			$caption = implode("\n\n", $caption);
+				$article['title'] = $doc['h2']->text();
 
-			if ($caption !== '') {
-				$article['caption'] = $caption;
+				foreach ($main->find('.promo-image-box') as $element) {
+					$element = pq($element);
+					$text = $element->text();
+
+					if ($text === '') {
+						continue;
+					}
+
+					$caption[] = $text;
+				}
+
+				$main = $doc['#articleBody'];
 			}
-
 
 			$content = array();
 
@@ -712,6 +730,7 @@
 			}
 
 			$content = implode("\n\n", $content);
+
 			$article['content'] = $content;
 
 
@@ -798,7 +817,7 @@
 		private function libertytimes ($html) {
 			$article = $this->article;
 			$doc = phpQuery::newDocument($html);
-			$main = $doc['.articlebody'];
+			$main = $doc['.whitecon'];
 
 			if ($main->length > 0) {
 				$caption = array();
@@ -807,7 +826,13 @@
 
 				foreach ($imgs as $img) {
 					$img = pq($img);
-					$caption[] = $img->attr('alt');
+					$alt = $img->attr('alt');
+
+					if ($alt === '廣告') {
+						continue;
+					}
+
+					$caption[] = $alt;
 				}
 
 				$caption = implode("\n\n", $caption);
