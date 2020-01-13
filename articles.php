@@ -344,6 +344,7 @@
 					$category !== '國際頭條' &&
 					$category !== '國際新聞' &&
 					$category !== '財經焦點' &&
+					$category !== '財經觀點' &&
 					$category !== '熱門話題' &&
 					$category !== '副刊焦點' &&
 					$category !== '論壇' &&
@@ -357,7 +358,8 @@
 					}
 
 					if ($category === '論壇' ||
-						$category === '名采') {
+						$category === '名采' ||
+						$category === '財經觀點') {
 						return 'opinion';
 					}
 
