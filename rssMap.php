@@ -93,7 +93,7 @@
 		}
 
 		private function libertytimes () {
-			$doc = phpQuery::newDocument(file_get_contents('http://news.ltn.com.tw/service/8'));
+			$doc = phpQuery::newDocument(file_get_contents('https://service.ltn.com.tw/RSS'));
 			$map = array();
 
 			foreach ($doc['.ltnrss tr']->slice(1) as $tr) {
@@ -101,18 +101,13 @@
 				$td = $tr['td'];
 				$label = $td->eq(0)->text();
 
-				if ($label !== '頭版' &&
-					$label !== '政治' &&
+				if ($label !== '政治' &&
 					$label !== '社會' &&
 					$label !== '生活' &&
-					$label !== '言論' &&
+					$label !== '評論' &&
 					$label !== '國際' &&
 					$label !== '財經' &&
-					$label !== '地方' &&
-					$label !== '台北都會' &&
-					$label !== '北部新聞' &&
-					$label !== '中部新聞' &&
-					$label !== '南部新聞') {
+					$label !== '地方') {
 					continue;
 				}
 
