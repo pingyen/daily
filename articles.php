@@ -27,7 +27,7 @@
 			$label = $rss['label'];
 
 			if ($source === 'libertytimes') {
-				$kind = $label === '言論' ? 'opinion' : 'news';
+				$kind = $label === '評論' ? 'opinion' : 'news';
 				$category = $label;
 			}
 			else if ($source === 'udn') {
