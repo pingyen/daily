@@ -176,17 +176,7 @@
 		}
 
 		private function filter ($articles) {
-			$articles2 = array();
-
-			foreach ($articles as $article) {
-				if ($article['source'] === 'libertytimes' && strpos($article['link'], '/paper/') === false) {
-					continue;
-				}
-
-				$articles2[] = $article;
-			}
-
-			return $articles2;
+			return $articles;
 		}
 
 		private function postProcess ($articles) {
